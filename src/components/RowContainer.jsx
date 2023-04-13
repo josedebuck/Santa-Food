@@ -5,6 +5,7 @@ import NotFound from "../img/NotFound.svg";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
 
+
 const RowContainer = ({ flag, data, scrollValue }) => {
   const rowContainer = useRef();
 
@@ -86,8 +87,11 @@ const RowContainer = ({ flag, data, scrollValue }) => {
           </p>
         </div>
       )}
+      
+
     </div>
   );
 };
+
 
 export default RowContainer;
