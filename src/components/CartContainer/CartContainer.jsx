@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { RiRefreshFill } from "react-icons/ri";
-
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useStateValue } from "../context/StateProvider";
-import { actionType } from "../context/reducer";
-import EmptyCart from "../img/emptyCart.svg";
-import CartItem from "./CartItem";
+import { useStateValue } from "../../context/StateProvider";
+import { actionType } from "../../context/reducer";
+import EmptyCart from "../../img/emptyCart.svg";
+import CartItem from "./CartItem"; // Ruta modificada
+
 
 const CartContainer = () => {
   const [{ cartShow, cartItems, user }, dispatch] = useStateValue();
@@ -20,13 +21,48 @@ const CartContainer = () => {
     });
   };
 
+  const addToCart = (item) => {
+    const existingItem = cartItems.some((cartItem) => cartItem.id === item.id);
+
+    if (existingItem) {
+      const updatedCartItems = cartItems.map((cartItem) => {
+        if (cartItem.id === item.id) {
+          return {
+            ...cartItem,
+            qty: cartItem.qty + 1,
+          };
+        }
+        return cartItem;
+      });
+
+      dispatch({
+        type: actionType.SET_CARTITEMS,
+        cartItems: updatedCartItems,
+      });
+    } else {
+      dispatch({
+        type: actionType.SET_CARTITEMS,
+        cartItems: [
+          ...cartItems,
+          {
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            imageURL: item.imageURL,
+            qty: 1,
+          },
+        ],
+      });
+    }
+  };
+
   useEffect(() => {
     let totalPrice = cartItems.reduce(function (accumulator, item) {
       return accumulator + item.qty * item.price;
     }, 0);
     setTot(totalPrice);
-    console.log(tot);
-  }, [tot, flag]);
+    console.log(totalPrice);
+  }, [cartItems]);
 
   const clearCart = () => {
     dispatch({
@@ -35,6 +71,8 @@ const CartContainer = () => {
     });
 
     localStorage.setItem("cartItems", JSON.stringify([]));
+
+    setTot(0); // Restablecer el estado tot a cero
   };
 
   return (
@@ -48,14 +86,14 @@ const CartContainer = () => {
         <motion.div whileTap={{ scale: 0.75 }} onClick={showCart}>
           <MdOutlineKeyboardBackspace className="text-textColor text-3xl" />
         </motion.div>
-        <p className="text-textColor text-lg font-semibold">Cart</p>
+        <p className="text-textColor text-lg font-semibold">Carrito</p>
 
         <motion.p
           whileTap={{ scale: 0.75 }}
           className="flex items-center gap-2 p-1 px-2 my-2 bg-gray-100 rounded-md hover:shadow-md  cursor-pointer text-textColor text-base"
           onClick={clearCart}
         >
-          Clear <RiRefreshFill />
+          Borrar <RiRefreshFill />
         </motion.p>
       </div>
 
@@ -98,13 +136,15 @@ const CartContainer = () => {
             </div>
 
             {user ? (
-              <motion.button
-                whileTap={{ scale: 0.8 }}
-                type="button"
-                className="w-full p-2 rounded-full bg-gradient-to-tr from-orange-400 to-orange-600 text-gray-50 text-lg my-2 hover:shadow-lg"
-              >
-                Check Out
-              </motion.button>
+              <Link to="/summary">
+                <motion.button
+                  whileTap={{ scale: 0.8 }}
+                  type="button"
+                  className="w-full p-2 rounded-full bg-gradient-to-tr from-orange-400 to-orange-600 text-gray-50 text-lg my-2 hover:shadow-lg"
+                >
+                  Pagar
+                </motion.button>
+              </Link>
             ) : (
               <motion.button
                 whileTap={{ scale: 0.8 }}

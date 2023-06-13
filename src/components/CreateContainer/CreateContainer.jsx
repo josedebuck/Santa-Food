@@ -8,8 +8,8 @@ import {
   MdFoodBank,
   MdAttachMoney,
 } from "react-icons/md";
-import { categories } from "../utils/data";
-import Loader from "./Loader";
+import { categories } from "../../utils/data";
+import Loader from "../Loader/Loader";
 import {
   deleteObject,
   getDownloadURL,
@@ -17,9 +17,9 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { storage } from "../firebase.config";
-import { getAllFoodItems, saveItem } from "../utils/firebaseFunctions";
-import { actionType } from "../context/reducer";
-import { useStateValue } from "../context/StateProvider";
+import { getAllFoodItems, saveItem } from "../../utils/firebaseFunctions";
+import { actionType } from "../../context/reducer";
+import { useStateValue } from "../../context/StateProvider";
 
 const CreateContainer = () => {
   const [title, setTitle] = useState("");
