@@ -3,17 +3,17 @@ import { MdShoppingBasket, MdAdd, MdLogout } from "react-icons/md";
 import { motion } from "framer-motion";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../firebase.config";
-import Logo from "../../img/logo.png";
 import Avatar from "../../img/avatar.png";
 import { Link } from "react-router-dom";
 import { useStateValue } from "../../context/StateProvider";
 import { actionType } from "../../context/reducer";
+import { useNavigate } from "react-router-dom";
 
 
 const Header = () => {
   const firebaseAuth = getAuth(app);
   const provider = new GoogleAuthProvider();
-  
+  const navigate = useNavigate();
 
   const [{ user, cartShow, cartItems }, dispatch] = useStateValue();
 
@@ -32,6 +32,15 @@ const Header = () => {
     } else {
       setIsMenu(!isMenu);
     }
+  };
+
+  const emptyCart = () => {
+    dispatch({
+      type: actionType.SET_CARTITEMS,
+      cartItems: [],
+    });
+    localStorage.removeItem("cartItems");
+    navigate("/");
   };
 
   const logout = () => {
@@ -126,6 +135,10 @@ const Header = () => {
                 >
                   Logout <MdLogout />
                 </p>
+                <p
+                  className="px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-100 transition-all duration-100 ease-in-out text-textColor text-base"
+                  onClick={logout}
+                >Mis Ordenes</p>
               </motion.div>
             )}
           </div>
@@ -149,7 +162,7 @@ const Header = () => {
         </div>
 
         <Link to={"/"} className="flex items-center gap-2">
-          <p className="text-headingColor text-xl font-bold"> Santa Food</p>
+          <p className="text-headingColor text-xl font-bold" onClick={emptyCart}> Santa Food</p>
         </Link>
 
         <div className="relative">

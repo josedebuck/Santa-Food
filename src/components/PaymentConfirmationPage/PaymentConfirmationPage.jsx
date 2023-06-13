@@ -2,9 +2,11 @@ import React, { useEffect } from "react";
 import { BsFillCreditCard2BackFill } from "react-icons/bs";
 import { useStateValue } from "../../context/StateProvider";
 import { actionType } from "../../context/reducer";
+import { useNavigate } from "react-router-dom";
 
 const PaymentConfirmationPage = () => {
   const [{ cartItems }, dispatch] = useStateValue();
+  const navigate = useNavigate();
 
   // Función para calcular el monto total
   const calculateGrandTotal = () => {
@@ -15,21 +17,23 @@ const PaymentConfirmationPage = () => {
     return total;
   };
 
+  // Función para vaciar el carrito
+  const emptyCart = () => {
+    dispatch({
+      type: actionType.SET_CARTITEMS,
+      cartItems: [],
+    });
+    localStorage.removeItem("cartItems");
+    navigate("/");
+  };
+
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      // Vaciar el carrito y limpiar el almacenamiento local
-      dispatch({
-        type: actionType.SET_CART_ITEMS,
-        cartItems: [],
-      });
-      localStorage.removeItem("cartItems");
-    };
+    const timer = setTimeout(() => {
+      // Vaciar el carrito y limpiar el almacenamiento local después de 5 segundos
+      emptyCart();
+    }, 5000);
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -58,6 +62,9 @@ const PaymentConfirmationPage = () => {
           </div>
         </div>
       </div>
+      <button className="btn btn-primary mt-4" onClick={emptyCart}>
+        Seguir comprando
+      </button>
     </div>
   );
 };

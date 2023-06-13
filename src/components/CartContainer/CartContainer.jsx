@@ -69,11 +69,12 @@ const CartContainer = () => {
       type: actionType.SET_CARTITEMS,
       cartItems: [],
     });
-
-    localStorage.setItem("cartItems", JSON.stringify([]));
-
+  
+    localStorage.removeItem("cartItems");
+  
     setTot(0); // Restablecer el estado tot a cero
   };
+  
 
   return (
     <motion.div
