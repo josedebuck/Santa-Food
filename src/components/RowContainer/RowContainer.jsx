@@ -68,7 +68,6 @@ const RowContainer = ({ flag, data, scrollValue }) => {
             <div className="w-full flex items-center justify-between">
               <motion.div
                 className="w-40 h-40 -mt-8 drop-shadow-2xl"
-                whileHover={{ scale: 1.2 }}
               >
                 <img
                   src={item?.imageURL}
