@@ -6,7 +6,6 @@ import { actionType } from "../../context/reducer";
 import { fetchCart } from "../../utils/fetchLocalStorageData";
 let items = [];
 
-
 const CartItem = ({ item, setFlag, flag }) => {
   const [{ cartItems }, dispatch] = useStateValue();
   const [qty, setQty] = useState(item.qty);
@@ -34,7 +33,6 @@ const CartItem = ({ item, setFlag, flag }) => {
       }
     }
   };
-  
 
   useEffect(() => {
     if (item.qty !== qty) {
@@ -61,20 +59,22 @@ const CartItem = ({ item, setFlag, flag }) => {
       cartDispatch(updatedCartItems);
       setQty(0); // Establecer qty en 0 al eliminar el artículo
     } else if (action === "subtract") {
-      const updatedCartItems = cartItems.map((cartItem) => {
-        if (cartItem.id === item.id) {
-          const newQty = cartItem.qty - 1;
-          if (newQty <= 0) {
-            // Eliminar el artículo del carrito si la cantidad es menor o igual a cero
-            return null;
+      const updatedCartItems = cartItems
+        .map((cartItem) => {
+          if (cartItem.id === item.id) {
+            const newQty = cartItem.qty - 1;
+            if (newQty <= 0) {
+              // Eliminar el artículo del carrito si la cantidad es menor o igual a cero
+              return null;
+            }
+            return {
+              ...cartItem,
+              qty: newQty,
+            };
           }
-          return {
-            ...cartItem,
-            qty: newQty,
-          };
-        }
-        return cartItem;
-      }).filter(Boolean); // Filtrar los elementos nulos (artículos eliminados)
+          return cartItem;
+        })
+        .filter(Boolean); // Filtrar los elementos nulos (artículos eliminados)
       cartDispatch(updatedCartItems);
     }
   };

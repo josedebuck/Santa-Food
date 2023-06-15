@@ -8,7 +8,6 @@ import { actionType } from "../../context/reducer";
 import EmptyCart from "../../img/emptyCart.svg";
 import CartItem from "./CartItem"; // Ruta modificada
 
-
 const CartContainer = () => {
   const [{ cartShow, cartItems, user }, dispatch] = useStateValue();
   const [flag, setFlag] = useState(1);
@@ -69,12 +68,11 @@ const CartContainer = () => {
       type: actionType.SET_CARTITEMS,
       cartItems: [],
     });
-  
+
     localStorage.removeItem("cartItems");
-  
+
     setTot(0); // Restablecer el estado tot a cero
   };
-  
 
   return (
     <motion.div

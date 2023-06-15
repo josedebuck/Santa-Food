@@ -10,3 +10,4 @@ export { default as CartItem } from "../components/CartContainer/CartItem";
 export { default as Footer } from "../components/Footer/Footer";
 export { default as SummaryPage } from "../components/SummaryPage/SummaryPage";
 export { default as PaymentConfirmationPage } from "../components/PaymentConfirmationPage/PaymentConfirmationPage";
+

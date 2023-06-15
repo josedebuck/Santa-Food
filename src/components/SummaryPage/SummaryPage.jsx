@@ -3,12 +3,12 @@ import { useStateValue } from "../../context/StateProvider";
 import { actionType } from "../../context/reducer";
 import { useNavigate } from "react-router-dom";
 import { BsFillCreditCard2BackFill } from "react-icons/bs";
-import { MdPayment } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 
 const SummaryPage = () => {
-  const [{ cartItems }, dispatch] = useStateValue();
+  const [{ cartItems, user }, dispatch] = useStateValue();
   const navigate = useNavigate();
   const [creditCardInfo, setCreditCardInfo] = useState({
     cardNumber: "",
@@ -30,7 +30,7 @@ const SummaryPage = () => {
     }
   }, []); // Ejecutar solo una vez al cargar la página
 
-  const handlePay = (event) => {
+  const handlePay = async (event) => {
     event.preventDefault(); // Prevenir recarga de la página
 
     // Guardar el estado actual del carrito en el almacenamiento local
@@ -39,23 +39,36 @@ const SummaryPage = () => {
     // Mostrar notificación de pago realizado
     toast.success("Pago realizado correctamente");
 
+    // Almacenar el pedido en Firebase
+    // Almacenar el pedido en Firebase
+    const orderData = {
+      cartItems,
+      creditCardInfo,
+      timestamp: new Date().getTime(),
+      userId: user.uid,
+      userName: user.displayName, // Agregar el nombre de usuario
+    };
+
+    const db = getFirestore();
+
+    try {
+      const docRef = await addDoc(collection(db, "orders"), orderData);
+      console.log("Pedido almacenado con ID:", docRef.id);
+    } catch (error) {
+      console.error("Error al almacenar el pedido:", error);
+    }
+
     // Redirigir a la página de confirmación después de 5 segundos
     setTimeout(() => {
       navigate("/payment-confirmation");
     }, 5000);
   };
 
-  // Función para calcular la suma total de la cantidad de cada artículo
-  const calculateTotalQuantity = () => {
-    return cartItems.reduce((total, item) => total + item.qty, 0);
-  };
+
 
   // Función para calcular el total general de todos los artículos
   const calculateGrandTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.qty * item.price,
-      0
-    );
+    return cartItems.reduce((total, item) => total + item.qty * item.price, 0);
   };
 
   const handleInputChange = (event) => {
@@ -68,7 +81,7 @@ const SummaryPage = () => {
 
   return (
     <div className="p-8">
-      <ToastContainer />      
+      <ToastContainer />
       <div className="flex">
         <div className="w-1/2 pr-8">
           <div className="flex items-center mb-4">

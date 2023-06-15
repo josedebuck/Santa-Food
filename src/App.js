@@ -7,11 +7,10 @@ import CreateContainer from "./components/CreateContainer/CreateContainer";
 import Footer from "./components/Footer/Footer";
 import SummaryPage from "./components/SummaryPage/SummaryPage";
 import PaymentConfirmationPage from "./components/PaymentConfirmationPage/PaymentConfirmationPage";
+import MyOrders from "./components/MyOrders/MyOrders"; // Importa el componente MisOrdenes
 import { useStateValue } from "./context/StateProvider";
 import { getAllFoodItems } from "./utils/firebaseFunctions";
 import { actionType } from "./context/reducer";
-
-
 
 const App = () => {
   const [{ foodItems }, dispatch] = useStateValue();
@@ -43,6 +42,7 @@ const App = () => {
               path="/payment-confirmation"
               element={<PaymentConfirmationPage />}
             />
+            <Route path="/mis-ordenes" element={<MyOrders />} /> {/* Agrega la ruta para MisOrdenes */}
           </Routes>
         </main>
         <Footer />
