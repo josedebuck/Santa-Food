@@ -16,6 +16,12 @@ const SummaryPage = () => {
     expirationDate: "",
     cvv: "",
   });
+  const [additionalInfo, setAdditionalInfo] = useState({
+    address: "",
+    email: "",
+    postalCode: "",
+    phoneNumber: "",
+  });
 
   useEffect(() => {
     if (cartItems.length === 0) {
@@ -40,13 +46,13 @@ const SummaryPage = () => {
     toast.success("Pago realizado correctamente");
 
     // Almacenar el pedido en Firebase
-    // Almacenar el pedido en Firebase
     const orderData = {
       cartItems,
       creditCardInfo,
+      additionalInfo,
       timestamp: new Date().getTime(),
       userId: user.uid,
-      userName: user.displayName, // Agregar el nombre de usuario
+      userName: user.displayName,
     };
 
     const db = getFirestore();
@@ -64,9 +70,6 @@ const SummaryPage = () => {
     }, 5000);
   };
 
-
-
-  // Función para calcular el total general de todos los artículos
   const calculateGrandTotal = () => {
     return cartItems.reduce((total, item) => total + item.qty * item.price, 0);
   };
@@ -79,11 +82,19 @@ const SummaryPage = () => {
     }));
   };
 
+  const handleAdditionalInfoChange = (event) => {
+    const { name, value } = event.target;
+    setAdditionalInfo((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="p-8">
       <ToastContainer />
-      <div className="flex">
-        <div className="w-1/2 pr-8">
+      <div className="flex flex-col lg:flex-row">
+        <div className="lg:w-1/2 pr-0 lg:pr-8 mb-8 lg:mb-0">
           <div className="flex items-center mb-4">
             <BsFillCreditCard2BackFill className="text-4xl mr-2" />
             <h3 className="text-lg font-bold">Información de Pago</h3>
@@ -105,14 +116,14 @@ const SummaryPage = () => {
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
-            <div className="flex justify-between">
+            <div className="flex flex-col lg:flex-row">
               <input
                 type="text"
                 name="expirationDate"
                 placeholder="Fecha de Expiración"
                 value={creditCardInfo.expirationDate}
                 onChange={handleInputChange}
-                className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-1/2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full lg:w-1/2 lg:mr-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
               <input
                 type="text"
@@ -120,9 +131,41 @@ const SummaryPage = () => {
                 placeholder="CVV"
                 value={creditCardInfo.cvv}
                 onChange={handleInputChange}
-                className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-1/2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full lg:w-1/2 lg:ml-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
+            <input
+              type="text"
+              name="address"
+              placeholder="Dirección"
+              value={additionalInfo.address}
+              onChange={handleAdditionalInfoChange}
+              className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Correo Electrónico"
+              value={additionalInfo.email}
+              onChange={handleAdditionalInfoChange}
+              className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+            <input
+              type="text"
+              name="postalCode"
+              placeholder="Código Postal"
+              value={additionalInfo.postalCode}
+              onChange={handleAdditionalInfoChange}
+              className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+            <input
+              type="tel"
+              name="phoneNumber"
+              placeholder="Número de Teléfono"
+              value={additionalInfo.phoneNumber}
+              onChange={handleAdditionalInfoChange}
+              className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
             <button
               onClick={handlePay}
               className="bg-gradient-to-br from-orange-400 to-orange-500 py-2 px-4 rounded-md w-full hover:bg-orange-600"
@@ -131,34 +174,29 @@ const SummaryPage = () => {
             </button>
           </form>
         </div>
-        <div className="w-1/2">
-          <div className="flex items-center">
-            <div className="text-4xl mr-4" />
-            <div className="credit-card-form">
-              <div className="flex items-center mb-4">
-                <h3 className="text-lg font-bold">Resumen de Compra</h3>
-              </div>
-              {cartItems.length > 0 ? (
-                <div className="bg-white border border-gray-300 rounded-md py-2 px-3 mb-2">
-                  <h4 className="text-lg font-bold mb-2">Resumen de Compra:</h4>
-                  <ul className="list-disc pl-4">
-                    {cartItems.map((item) => (
-                      <li key={item.id}>
-                        {item.title} - ${item.price} x {item.qty} - Total: $
-                        {item.qty * item.price}
-                      </li>
-                    ))}
-                  </ul>
-                  <hr className="my-4" />
-                  <p className="text-lg font-bold">
-                    Monto Total: ${calculateGrandTotal()}
-                  </p>
-                </div>
-              ) : (
-                <p>No hay elementos en el carrito</p>
-              )}
-            </div>
+        <div className="lg:w-1/2">
+          <div className="flex items-center mb-4">
+            <h3 className="text-lg font-bold">Resumen de Compra</h3>
           </div>
+          {cartItems.length > 0 ? (
+            <div className="bg-white border border-gray-300 rounded-md py-2 px-3 mb-2">
+              <h4 className="text-lg font-bold mb-2">Resumen de Compra:</h4>
+              <ul className="list-disc pl-4">
+                {cartItems.map((item) => (
+                  <li key={item.id}>
+                    {item.title} - ${item.price} x {item.qty} - Total: $
+                    {item.qty * item.price}
+                  </li>
+                ))}
+              </ul>
+              <hr className="my-4" />
+              <p className="text-lg font-bold">
+                Monto Total: ${calculateGrandTotal()}
+              </p>
+            </div>
+          ) : (
+            <p>No hay elementos en el carrito</p>
+          )}
         </div>
       </div>
     </div>
