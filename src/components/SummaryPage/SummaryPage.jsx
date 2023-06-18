@@ -39,6 +39,34 @@ const SummaryPage = () => {
   const handlePay = async (event) => {
     event.preventDefault(); // Prevenir recarga de la página
 
+      // Verificar si los campos requeridos están completos
+  const requiredFields = [
+    "cardNumber",
+    "cardholderName",
+    "expirationDate",
+    "cvv",
+    "address",
+    "email",
+    "postalCode",
+    "phoneNumber",
+  ];
+
+  const incompleteFields = requiredFields.filter(
+    (field) => !creditCardInfo[field] && !additionalInfo[field]
+  );
+
+  // Si hay campos incompletos, mostrar alerta y resaltar los campos en rojo
+  if (incompleteFields.length > 0) {
+    toast.error("Por favor, completa todos los campos");
+    const fieldsToHighlight = incompleteFields.map(
+      (field) => document.getElementById(field)
+    );
+    fieldsToHighlight.forEach((field) => {
+      field.style.borderColor = "red";
+    });
+    return;
+  }
+
     // Guardar el estado actual del carrito en el almacenamiento local
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
 
@@ -76,9 +104,16 @@ const SummaryPage = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    let formattedValue = value;
+    if (name === "expirationDate") {
+      formattedValue = formatExpirationDate(value); // Formatear la fecha de expiración
+      if (formattedValue.length > 5) {
+        formattedValue = formattedValue.slice(0, 5); // Limitar a 5 caracteres
+      }
+    }
     setCreditCardInfo((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: formattedValue,
     }));
   };
 
@@ -90,6 +125,24 @@ const SummaryPage = () => {
     }));
   };
 
+  const formatCreditCardNumber = (number) => {
+    // Agregar espacios cada cuatro dígitos
+    const formattedNumber = number
+      .replace(/\s/g, "")
+      .replace(/(\d{4})/g, "$1 ");
+    return formattedNumber.trim();
+  };
+
+  const formatExpirationDate = (date) => {
+    const formattedDate = date.replace(/\D/g, "").slice(0, 5); // Eliminar caracteres no numéricos y limitar a 5 caracteres
+    if (formattedDate.length > 2) {
+      const month = formattedDate.slice(0, 2);
+      const year = formattedDate.slice(2);
+      return `${month}/${year}`;
+    } else {
+      return formattedDate;
+    }
+  };
   return (
     <div className="p-8">
       <ToastContainer />
@@ -104,9 +157,13 @@ const SummaryPage = () => {
               type="text"
               name="cardNumber"
               placeholder="Número de Tarjeta"
-              value={creditCardInfo.cardNumber}
+              value={formatCreditCardNumber(creditCardInfo.cardNumber)}
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+              required
+              pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}"
+              minLength="19"
+              maxLength="19"
             />
             <input
               type="text"
@@ -123,7 +180,7 @@ const SummaryPage = () => {
                 placeholder="Fecha de Expiración"
                 value={creditCardInfo.expirationDate}
                 onChange={handleInputChange}
-                className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full lg:w-1/2 lg:mr-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full lg:w-1/2 lg:mr-2 focus:outline-none focus:ring-2 focus:ring-orange-500"        
               />
               <input
                 type="text"
@@ -132,6 +189,8 @@ const SummaryPage = () => {
                 value={creditCardInfo.cvv}
                 onChange={handleInputChange}
                 className="border border-gray-300 rounded-md py-2 px-3 mb-2 w-full lg:w-1/2 lg:ml-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                minLength="3"
+                maxLength="3"        
               />
             </div>
             <input
