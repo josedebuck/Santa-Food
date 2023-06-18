@@ -30,8 +30,6 @@ const HomeContainer = () => {
           Pedir!
         </button>
       </div>
-      <div className="py-2 flex-1 flex items-center relative">
-      </div>
     </section>
   );
 };

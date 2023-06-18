@@ -51,7 +51,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
   }, [scrollValue]);
 
   return (
-    <div
+    <div 
       ref={rowContainer}
       className={`w-full flex items-center gap-3  my-12 scroll-smooth  ${
         flag

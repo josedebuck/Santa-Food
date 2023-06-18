@@ -1,6 +1,5 @@
 export { default as Header } from "../components/Header/Header";
 export { default as MainContainer } from "../components/MenuContainer/MenuContainer";
-export { default as CreateContainer } from "../components/CreateContainer/CreateContainer";
 export { default as HomeContainer } from "../components/HomeContainer/HomeContainer";
 export { default as Loader } from "../components/Loader/Loader";
 export { default as RowContainer } from "../components/RowContainer/RowContainer";
