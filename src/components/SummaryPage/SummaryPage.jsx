@@ -95,7 +95,7 @@ const SummaryPage = () => {
     // Redirigir a la página de confirmación después de 5 segundos
     setTimeout(() => {
       navigate("/payment-confirmation");
-    }, 5000);
+    }, 2000);
   };
 
   const calculateGrandTotal = () => {
